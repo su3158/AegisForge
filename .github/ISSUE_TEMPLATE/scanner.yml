@@ -1,0 +1,15 @@
+name: Scanner
+description: Request or report scanner behavior
+body:
+  - type: textarea
+    id: scope
+    attributes:
+      label: Authorized scope
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected scanner behavior
+    validations:
+      required: true

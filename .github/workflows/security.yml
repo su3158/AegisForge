@@ -1,0 +1,54 @@
+name: Security
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 3 * * 1"
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Required by gitleaks-action for organization-owned repositories.
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  audits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Python audit
+        run: |
+          if [ -f pyproject.toml ]; then
+            uv tool run pip-audit --strict
+          else
+            echo "pyproject.toml not present yet; skipping Python audit for skeleton."
+          fi
+      - name: Frontend audit
+        run: |
+          if [ -f apps/web/package.json ]; then
+            corepack enable
+            corepack pnpm --dir apps/web audit --audit-level high
+          else
+            echo "apps/web/package.json not present yet; skipping frontend audit for skeleton."
+          fi
+      - name: SBOM
+        run: |
+          mkdir -p sbom
+          docker run --rm -v "$PWD:/repo" anchore/syft:latest dir:/repo -o spdx-json=/repo/sbom/aegisforge.spdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom/

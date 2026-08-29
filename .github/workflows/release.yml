@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.14"
+      - name: Verify version when package exists
+        run: |
+          if [ -f pyproject.toml ]; then
+            uv sync
+            uv run aegisforge version | grep "0.1.0-alpha"
+          else
+            echo "pyproject.toml not present yet; skipping version check for skeleton."
+          fi
+      - uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          generate_release_notes: true

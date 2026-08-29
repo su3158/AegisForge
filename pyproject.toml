@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aegisforge-ai"
+version = "0.1.0a0"
+description = "Open-source AI application security assessment and red team orchestration platform."
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+license = "Apache-2.0"
+authors = [{ name = "su3158" }]
+keywords = ["security", "llm", "rag", "agent", "mcp", "red-team"]
+dependencies = [
+  "alembic>=1.13",
+  "cryptography>=43",
+  "fastapi>=0.115",
+  "httpx>=0.27",
+  "keyring>=25",
+  "pydantic-settings>=2.5",
+  "pyyaml>=6.0",
+  "sqlalchemy>=2.0",
+  "uvicorn>=0.30",
+]
+
+[project.optional-dependencies]
+browser = ["playwright>=1.46"]
+postgres = ["psycopg[binary]>=3.2"]
+ai = []
+garak = ["garak>=0.11"]
+hf = ["huggingface-hub>=0.24"]
+dev = [
+  "mypy>=1.11",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.23",
+  "ruff>=0.6",
+  "types-PyYAML>=6.0",
+]
+all = [
+  "aegisforge-ai[browser,postgres,ai,garak,hf,dev]",
+]
+
+[project.scripts]
+aegisforge = "aegisforge.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["aegisforge"]
+artifacts = ["apps/web/dist"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["aegisforge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

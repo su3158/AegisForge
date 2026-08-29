@@ -1,0 +1,6 @@
+AegisForge
+Copyright 2026 su3158
+
+This project is distributed under Apache-2.0.
+
+Third-party security frameworks, datasets, scanner outputs, and vendor marks remain owned by their respective authors. AegisForge should import framework data only through explicit sync commands that preserve license and version metadata.

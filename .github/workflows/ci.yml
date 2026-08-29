@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.14"
+      - name: Backend checks
+        shell: bash
+        run: |
+          if [ -f pyproject.toml ]; then
+            uv sync --all-extras
+            uv run pytest
+            uv run ruff check .
+            uv run mypy aegisforge
+          else
+            echo "pyproject.toml not present yet; skipping backend checks for skeleton."
+          fi
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Frontend build
+        run: |
+          if [ -f apps/web/package.json ]; then
+            corepack pnpm --dir apps/web install --frozen-lockfile
+            corepack pnpm --dir apps/web build
+          else
+            echo "apps/web/package.json not present yet; skipping frontend build for skeleton."
+          fi
+
+  compose-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose config
+        run: docker compose --profile lab --profile full config
