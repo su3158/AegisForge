@@ -15,7 +15,7 @@ from aegisforge.scope import ScopePolicy, assert_url_allowed
 
 
 def test_version_is_alpha() -> None:
-    assert __version__ == "0.1.0-alpha"
+    assert __version__ == "0.2.0-alpha"
 
 
 def test_scope_denies_unlisted_host() -> None:
@@ -63,5 +63,5 @@ def test_settings_endpoint_does_not_echo_database_url(tmp_path: Path) -> None:
 
     body = TestClient(app).get("/api/v1/settings").json()
 
-    assert body == {"database": "sqlite", "offline": False}
+    assert body == {"database": "sqlite", "offline": False, "auth_required": False}
     assert "secret-project.db" not in str(body)

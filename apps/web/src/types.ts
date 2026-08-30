@@ -10,7 +10,10 @@ export type ScanPhase =
   | "analyzing"
   | "reporting"
   | "completed"
+  | "cancelled"
   | "failed";
+
+export type ModuleName = "http" | "llm" | "browser" | "rag" | "agent" | "mcp";
 
 export interface Project {
   id: string;
@@ -27,10 +30,13 @@ export interface Target {
   id: string;
   projectId: string;
   name: string;
-  type: "web" | "api" | "llm" | "rag" | "agent" | "mcp";
+  type: "web" | "api" | ModuleName;
   endpoint: string;
   scope: "safe" | "standard" | "intrusive";
   health: "healthy" | "degraded" | "unknown";
+  allowedHosts: string[];
+  allowedPorts: number[];
+  scopeConfirmed: boolean;
 }
 
 export interface Scan {
@@ -47,6 +53,15 @@ export interface Scan {
   aiCostUsd: number;
   findings: number;
   errors: string[];
+}
+
+export interface SecretRef {
+  id: string;
+  projectId: string;
+  name: string;
+  kind: "ai_provider" | "target_auth" | "browser_login";
+  createdAt: string;
+  lastUsed: string;
 }
 
 export interface Finding {
@@ -102,6 +117,7 @@ export interface AegisData {
   projects: Project[];
   targets: Target[];
   scans: Scan[];
+  secrets: SecretRef[];
   findings: Finding[];
   evidence: Evidence[];
   chains: AttackChain[];

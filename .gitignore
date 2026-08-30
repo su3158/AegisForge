@@ -4,6 +4,7 @@
 .ruff_cache/
 .uv-cache/
 .venv/
+.pnpm-store/
 __pycache__/
 *.py[cod]
 

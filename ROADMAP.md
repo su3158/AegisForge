@@ -13,6 +13,16 @@ This roadmap is a planning document, not a guarantee.
 - Deterministic demo lab with Qdrant-backed RAG.
 - Linux and Windows GitHub CI.
 
+## 0.2.0-alpha
+
+- Typed Local Lite data model for core assessment records.
+- Local API workflow for project, target, scope, scan, finding, evidence, secret, coverage, and attack-chain reads/writes.
+- In-process scan runner with timeout, cancel, redacted evidence, standard-probe consent, and Scope Guard validation.
+- Browser-flow YAML validation for UI-driven LLM and Agent interactions.
+- React console workflow for targets, scan wizard, evidence, raw reveal UX, settings, coverage, attack chains, language switch, and dark mode.
+- README screenshots generated from the real Playwright-tested UI.
+- GitHub CI remains the primary Linux/Windows verification path.
+
 ## v1.0
 
 - Project, target, scan, finding, evidence, report, and framework coverage workflows.

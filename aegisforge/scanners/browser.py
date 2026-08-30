@@ -4,7 +4,24 @@ import json
 from pathlib import Path
 from typing import Any
 
+import yaml
+
+from aegisforge.errors import AegisForgeError, ErrorCode
+
 from .contracts import Evidence, Finding, ScanContext, Severity
+
+ALLOWED_ACTIONS = {
+    "goto",
+    "fill",
+    "click",
+    "press",
+    "wait_for_selector",
+    "expect_text",
+    "screenshot",
+    "select_option",
+    "check",
+    "uncheck",
+}
 
 
 def browser_flow_candidate(name: str, start_url: str, prompt_selector: str = "textarea") -> dict[str, Any]:
@@ -32,9 +49,32 @@ class BrowserFlowScanner:
             candidate = browser_flow_candidate(context.target.name, context.target.base_url)
             evidence = Evidence("CONFIGURATION", json.dumps(candidate, indent=2), self.id)
             return [Finding("Browser flow candidate generated", "browser_flow", Severity.INFO, evidence=[evidence])]
-        context.check_url(context.target.base_url)
-        evidence = Evidence("CONFIGURATION", Path(flow_path).read_text(encoding="utf-8"), self.id)
-        return [Finding("Browser flow loaded for execution", "browser_flow", Severity.INFO, evidence=[evidence])]
+        flow = load_flow(Path(flow_path))
+        validate_flow(flow, context)
+        evidence = Evidence("CONFIGURATION", json.dumps(flow, indent=2, sort_keys=True), self.id)
+        return [Finding("Browser flow validated for execution", "browser_flow", Severity.INFO, evidence=[evidence])]
+
+
+def load_flow(path: Path) -> dict[str, Any]:
+    loaded = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    if not isinstance(loaded, dict):
+        raise AegisForgeError(ErrorCode.invalid_config, "Browser flow must be a YAML object")
+    return loaded
+
+
+def validate_flow(flow: dict[str, Any], context: ScanContext) -> None:
+    steps = flow.get("steps")
+    if not isinstance(steps, list):
+        raise AegisForgeError(ErrorCode.invalid_config, "Browser flow requires steps")
+    for step in steps:
+        if not isinstance(step, dict):
+            raise AegisForgeError(ErrorCode.invalid_config, "Browser flow step must be an object")
+        action = step.get("action")
+        if action not in ALLOWED_ACTIONS:
+            raise AegisForgeError(ErrorCode.invalid_config, f"Browser flow action is not allowed: {action}")
+        # Scope Guard is applied at validation time and must be repeated by real Playwright execution later.
+        if action == "goto":
+            context.check_url(str(step.get("url", "")))
 
 
 def _dump_yaml(value: Any, indent: int = 0) -> str:
@@ -47,4 +87,3 @@ def _dump_yaml(value: Any, indent: int = 0) -> str:
 
 def _scalar(value: Any) -> str:
     return json.dumps(value) if isinstance(value, str) else str(value).lower()
-

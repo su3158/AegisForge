@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "aegisforge-ai"
-version = "0.1.0a0"
+name = "aegisforge"
+version = "0.2.0a0"
 description = "Open-source AI application security assessment and red team orchestration platform."
 readme = "README.md"
 requires-python = ">=3.12,<3.15"
@@ -37,7 +37,7 @@ dev = [
   "types-PyYAML>=6.0",
 ]
 all = [
-  "aegisforge-ai[browser,postgres,ai,garak,hf,dev]",
+  "aegisforge[browser,postgres,ai,garak,hf,dev]",
 ]
 
 [project.scripts]
@@ -47,9 +47,15 @@ aegisforge = "aegisforge.cli:main"
 packages = ["aegisforge"]
 artifacts = ["apps/web/dist"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"frameworks" = "frameworks"
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
+extend-ignore = ["B008"]
 
 [tool.mypy]
 python_version = "3.12"

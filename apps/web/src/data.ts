@@ -7,16 +7,20 @@ export const demoData: AegisData = {
     { id: "prj-mcp", name: "MCP Sandbox", owner: "Platform", risk: "medium", targets: 3, scans: 8, coverage: 41, lastScan: "2026-08-27 09:05" }
   ],
   targets: [
-    { id: "t-web", projectId: "prj-customer-ai", name: "Portal UI", type: "web", endpoint: "https://ai.example.test", scope: "safe", health: "healthy" },
-    { id: "t-chat", projectId: "prj-customer-ai", name: "Chat API", type: "llm", endpoint: "/v1/chat/completions", scope: "safe", health: "healthy" },
-    { id: "t-rag", projectId: "prj-customer-ai", name: "RAG Index", type: "rag", endpoint: "qdrant://rag-lab", scope: "standard", health: "degraded" },
-    { id: "t-agent", projectId: "prj-customer-ai", name: "Support Agent", type: "agent", endpoint: "https://ai.example.test/agent", scope: "safe", health: "healthy" },
-    { id: "t-mcp", projectId: "prj-mcp", name: "Filesystem MCP", type: "mcp", endpoint: "http://localhost:9001/mcp", scope: "safe", health: "unknown" }
+    { id: "t-web", projectId: "prj-customer-ai", name: "Portal UI", type: "web", endpoint: "https://ai.example.test", scope: "safe", health: "healthy", allowedHosts: ["ai.example.test"], allowedPorts: [443], scopeConfirmed: true },
+    { id: "t-chat", projectId: "prj-customer-ai", name: "Chat API", type: "llm", endpoint: "https://ai.example.test/v1/chat/completions", scope: "safe", health: "healthy", allowedHosts: ["ai.example.test"], allowedPorts: [443], scopeConfirmed: true },
+    { id: "t-rag", projectId: "prj-customer-ai", name: "RAG Index", type: "rag", endpoint: "http://localhost:6333", scope: "standard", health: "degraded", allowedHosts: ["localhost"], allowedPorts: [6333], scopeConfirmed: false },
+    { id: "t-agent", projectId: "prj-customer-ai", name: "Support Agent", type: "agent", endpoint: "https://ai.example.test/agent", scope: "safe", health: "healthy", allowedHosts: ["ai.example.test"], allowedPorts: [443], scopeConfirmed: true },
+    { id: "t-mcp", projectId: "prj-mcp", name: "Filesystem MCP", type: "mcp", endpoint: "http://localhost:9001/mcp", scope: "safe", health: "unknown", allowedHosts: ["localhost"], allowedPorts: [9001], scopeConfirmed: false }
   ],
   scans: [
     { id: "scan-1042", projectId: "prj-customer-ai", targetId: "t-chat", name: "Standard AI assessment", profile: "standard", safety: "safe", phase: "running", progress: 62, activePlugin: "llm.prompt_injection.indirect", requests: 1284, aiCostUsd: 4.17, findings: 7, errors: ["RAG document ACL probe inconclusive"] },
     { id: "scan-1031", projectId: "prj-customer-ai", targetId: "t-web", name: "Browser flow baseline", profile: "quick", safety: "safe", phase: "completed", progress: 100, activePlugin: "report.html", requests: 420, aiCostUsd: 0, findings: 3, errors: [] },
     { id: "scan-991", projectId: "prj-mcp", targetId: "t-mcp", name: "MCP read-only tool audit", profile: "standard", safety: "safe", phase: "analyzing", progress: 83, activePlugin: "mcp.tool_authorization", requests: 91, aiCostUsd: 0.38, findings: 2, errors: [] }
+  ],
+  secrets: [
+    { id: "sec-ai-local", projectId: "prj-customer-ai", name: "local-openai-compatible", kind: "ai_provider", createdAt: "2026-08-29", lastUsed: "2026-08-29 04:21" },
+    { id: "sec-browser-login", projectId: "prj-customer-ai", name: "auditor-browser-login", kind: "browser_login", createdAt: "2026-08-28", lastUsed: "Never" }
   ],
   findings: [
     { id: "F-000001", projectId: "prj-customer-ai", title: "Indirect prompt injection changes tool selection", severity: "critical", status: "candidate", confidence: "high", category: "prompt_injection", target: "Support Agent", frameworks: ["OWASP LLM01", "OWASP Agentic A02", "MITRE ATLAS AML.T0051"], evidenceIds: ["E-1001", "E-1002"] },

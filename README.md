@@ -2,36 +2,24 @@
 
 Open-source AI Application Security Assessment and Red Team Orchestration Platform.
 
-AegisForge is planned as an evidence-first security assessment platform for applications that combine Web, API, RAG, LLM, Agent, MCP/tool, and downstream system behavior. It is not intended to be only a prompt injection scanner.
+AegisForge is an evidence-first console for assessing applications that combine Web, API, RAG, LLM, Agent, MCP/tool, and downstream system behavior. It is not only a prompt injection scanner.
 
-Status: `0.1.0-alpha` skeleton in progress. This repository is not v1-complete yet.
+Status: `0.2.0-alpha` frontend workflow slice. The UI workflow is usable with demo data while the typed backend APIs continue to mature.
 
-## Scope
+![AegisForge project dashboard](docs/assets/aegisforge-dashboard.png)
 
-The alpha foundation targets:
+## What is included
 
-- Local Lite: FastAPI, React UI, embedded worker, SQLite, local filesystem evidence.
-- Full/Postgres mode: FastAPI, worker command, PostgreSQL, filesystem evidence volume.
-- CLI: `aegisforge init`, `serve`, `stop`, `worker`, `scan`, `report`, `frameworks sync`, and diagnostics.
-- Scanners: HTTP, LLM API, browser/UI flows, RAG, Agent, MCP, and optional external scanner enrichment.
-- Safety: deny-by-default Scope Guard, redacted evidence, explicit dataset import, no usage telemetry.
+- Project-centered React console with English/Japanese UI and light/dark theme.
+- Target creation with scope candidate confirmation.
+- Secret registration UI for encrypted secret storage APIs.
+- Scan wizard for quick/standard profiles, module selection, AI budget, and scope confirmation.
+- Polling scan status, cancel action, finding detail, evidence viewer, raw reveal re-auth UI, ASVS coverage, and attack-chain graph.
+- Local Lite backend, CLI, scanner skeletons, Scope Guard, redacted evidence, Docker/Compose files, GitHub Actions, and Gitleaks CI check.
 
-## License
+## Quickstart
 
-AegisForge is licensed under Apache-2.0. Third-party framework or dataset material is not treated as AegisForge-owned code.
-
-## Runtime Support
-
-Official alpha targets:
-
-- Linux
-- Windows
-
-Docker or Podman-compatible Compose is required for lab and E2E environments. macOS support is expected later but is not an alpha support target.
-
-## Local Lite
-
-Start:
+Local Lite:
 
 ```bash
 uv sync
@@ -39,23 +27,20 @@ uv run aegisforge init
 uv run aegisforge serve
 ```
 
+Open the UI shown by the server, normally `http://127.0.0.1:8765`.
+
 Stop a foreground server with `Ctrl+C`.
 
-Detached start:
+Detached start and stop:
 
 ```bash
 uv run aegisforge serve --detach
-```
-
-Stop a detached local server:
-
-```bash
 uv run aegisforge stop
 ```
 
-## Development UI
+## Frontend development
 
-The production UI is served by FastAPI after it is built. Frontend development uses Node 22 and pnpm.
+Node is only needed for UI development. Production builds are served by FastAPI.
 
 ```bash
 corepack enable
@@ -63,17 +48,38 @@ corepack pnpm --dir apps/web install
 corepack pnpm --dir apps/web dev
 ```
 
-## Worker
+Open `http://127.0.0.1:5173`.
 
-Local Lite embeds a single worker. Full mode can run an explicit worker:
+## First-use workflow
 
-```bash
-uv run aegisforge worker
-```
+1. Create or select a project from the left sidebar.
+2. Open **Targets** and add the application, API, LLM endpoint, browser flow target, RAG service, Agent, or MCP service.
+3. Review the generated scope candidate and confirm the allowed host/port before scanning.
+4. Open **Settings** and add AI provider, target auth, or browser login secrets.
+5. Open **Scans**, select the target, choose `quick` or `standard`, select modules, set AI budget, confirm scope, and start the scan.
+6. Watch scan progress from the scan list. Running scans can be cancelled.
+7. Review **Findings**, **Evidence**, **Attack Chains**, **Coverage**, and **Reports**.
+
+![Add target with scope confirmation](docs/assets/aegisforge-new-target.png)
+
+![Scan wizard](docs/assets/aegisforge-scan-wizard.png)
+
+![Evidence viewer](docs/assets/aegisforge-evidence.png)
+
+![ASVS coverage](docs/assets/aegisforge-coverage.png)
+
+## Security defaults
+
+- Do not run scanners against real internet targets unless scope is explicitly provided.
+- Scope Guard is deny-by-default; generated scope candidates still require confirmation.
+- Plaintext secrets must not be stored. UI secret values are intended to be encrypted by backend APIs before persistence.
+- Evidence is redacted by default. Raw reveal requires admin re-auth and must be audit logged by the backend.
+- `quick` uses safe baseline probes. `standard` can use realistic probes only with explicit consent and local/demo fixture isolation.
+- CI must not print prompt or completion bodies; scanner regression artifacts should keep hashes, plugin IDs, statuses, and redacted summaries only.
 
 ## Compose
 
-Lab mode with deterministic local targets and Qdrant:
+Lab mode with deterministic local targets:
 
 ```bash
 docker compose --profile lab up --build
@@ -93,37 +99,46 @@ Destructive data cleanup:
 docker compose --profile lab --profile full down -v
 ```
 
-Local Lite cleanup removes the project data directory:
+Local Lite cleanup:
 
 ```bash
 rm -rf .aegisforge
 ```
 
-On Windows PowerShell:
+Windows PowerShell:
 
 ```powershell
 Remove-Item -Recurse -Force .aegisforge
 ```
 
-## Framework Data
+Container mode still binds `http://127.0.0.1:8000` by default because Compose maps the container port directly.
 
-Framework control data is synced explicitly. AegisForge does not silently bundle or update third-party framework material.
+## README screenshots
 
-```bash
-uv run aegisforge frameworks sync --accept-license
+Screenshots are captured from the actual React UI. If the image files are missing, regenerate them instead of committing mock binaries.
+
+```powershell
+$env:AEGISFORGE_CAPTURE_SCREENSHOTS = "1"
+corepack pnpm --dir apps/web test --grep "captures README screenshots"
+Remove-Item Env:\AEGISFORGE_CAPTURE_SCREENSHOTS
 ```
 
-Each scan records the framework versions used.
+Expected files:
 
-## Datasets
+- `docs/assets/aegisforge-dashboard.png`
+- `docs/assets/aegisforge-new-target.png`
+- `docs/assets/aegisforge-scan-wizard.png`
+- `docs/assets/aegisforge-evidence.png`
+- `docs/assets/aegisforge-coverage.png`
 
-The core distribution should only include minimal safe probes. External attack datasets require explicit import, pinned revision, license metadata, hashes, and a dataset lock file.
+## Runtime support
 
-Harmful datasets require isolated opt-in and must not be enabled by default.
+Official alpha local targets:
 
-## Telemetry
+- Linux
+- Windows
 
-AegisForge does not send usage telemetry to project maintainers by default. Local logs, metrics, and traces may be generated for debugging and must avoid leaking raw secrets.
+Docker or Podman-compatible Compose is required for lab and E2E environments.
 
 ## Non-goals
 

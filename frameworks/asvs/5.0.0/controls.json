@@ -1,0 +1,43 @@
+{
+  "source": "OWASP Application Security Verification Standard 5.0.0",
+  "license": "CC BY-SA 4.0",
+  "status_default": "NOT_TESTED",
+  "controls": [
+    {
+      "id": "V1.1.1",
+      "title": "Architecture, design and threat model review is performed.",
+      "level": 1,
+      "automation": "MANUAL"
+    },
+    {
+      "id": "V2.1.1",
+      "title": "Passwords or shared secrets are protected by secure storage.",
+      "level": 1,
+      "automation": "SEMI_AUTOMATED"
+    },
+    {
+      "id": "V4.1.1",
+      "title": "Access control decisions are enforced server side.",
+      "level": 1,
+      "automation": "SEMI_AUTOMATED"
+    },
+    {
+      "id": "V5.2.1",
+      "title": "Input validation is applied before security-sensitive processing.",
+      "level": 2,
+      "automation": "AUTOMATED"
+    },
+    {
+      "id": "V7.1.1",
+      "title": "Security events are logged without exposing sensitive data.",
+      "level": 2,
+      "automation": "SEMI_AUTOMATED"
+    },
+    {
+      "id": "V14.1.1",
+      "title": "HTTP security configuration and dependency hygiene are reviewed.",
+      "level": 2,
+      "automation": "SEMI_AUTOMATED"
+    }
+  ]
+}

@@ -26,6 +26,20 @@ class FindingStatus(_StrEnum):
     ERROR = "error"
 
 
+class ScanProfile(_StrEnum):
+    QUICK = "quick"
+    STANDARD = "standard"
+
+
+class ScanState(_StrEnum):
+    CREATED = "created"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    TIMEOUT = "timeout"
+
+
 @dataclass(frozen=True)
 class Evidence:
     type: str
@@ -68,6 +82,7 @@ class ScanContext:
     target: Target
     scope_guard: ScopeGuard | None = None
     options: dict[str, Any] = field(default_factory=dict)
+    profile: ScanProfile = ScanProfile.QUICK
 
     def check_url(self, url: str) -> None:
         if self.scope_guard:

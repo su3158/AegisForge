@@ -13,7 +13,7 @@ from . import __version__
 from . import models as _models  # noqa: F401
 from .api import create_app
 from .config import load_settings
-from .db import Base, make_engine
+from .db import Base, make_engine, reset_legacy_alpha_schema
 from .errors import EXIT_CODES, AegisForgeError, ErrorCode
 
 OK = 0
@@ -63,7 +63,9 @@ def _run(args: argparse.Namespace) -> int:
         print(__version__)
     elif args.cmd == "init":
         settings.data_dir.mkdir(parents=True, exist_ok=True)
-        Base.metadata.create_all(make_engine(settings.database_url))
+        engine = make_engine(settings.database_url)
+        reset_legacy_alpha_schema(engine, Base)
+        Base.metadata.create_all(engine)
         print(f"initialized {settings.data_dir}")
     elif args.cmd == "serve":
         if args.detach:
