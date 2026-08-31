@@ -1,0 +1,78 @@
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+
+export const resources = {
+  en: {
+    translation: {
+      activeScans: "Active scans",
+      addProject: "Add project",
+      addSecret: "Add secret",
+      addTarget: "Add target",
+      aiBudget: "AI budget",
+      attackChains: "Attack Chains",
+      cancelScan: "Cancel scan",
+      confirmScope: "Confirm scope",
+      coverage: "Coverage",
+      dashboard: "Project Dashboard",
+      evidence: "Evidence",
+      findings: "Findings",
+      language: "Language",
+      loading: "Loading AegisForge",
+      modules: "Modules",
+      newScan: "New scan",
+      projects: "Projects",
+      rawReveal: "Reveal raw evidence",
+      reports: "Reports",
+      scanWizard: "Scan wizard",
+      scans: "Scans",
+      scope: "Scope",
+      secrets: "Secrets",
+      settings: "Settings",
+      startScan: "Start scan",
+      target: "Target",
+      targets: "Targets",
+      theme: "Theme",
+    },
+  },
+  ja: {
+    translation: {
+      activeScans: "実行中スキャン",
+      addProject: "プロジェクト追加",
+      addSecret: "シークレット追加",
+      addTarget: "ターゲット追加",
+      aiBudget: "AI予算",
+      attackChains: "攻撃チェーン",
+      cancelScan: "スキャン停止",
+      confirmScope: "スコープ確認",
+      coverage: "カバレッジ",
+      dashboard: "プロジェクトダッシュボード",
+      evidence: "証跡",
+      findings: "検出事項",
+      language: "言語",
+      loading: "AegisForgeを読み込み中",
+      modules: "モジュール",
+      newScan: "新規スキャン",
+      projects: "プロジェクト",
+      rawReveal: "Raw証跡を表示",
+      reports: "レポート",
+      scanWizard: "スキャンウィザード",
+      scans: "スキャン",
+      scope: "スコープ",
+      secrets: "シークレット",
+      settings: "設定",
+      startScan: "スキャン開始",
+      target: "ターゲット",
+      targets: "ターゲット",
+      theme: "テーマ",
+    },
+  },
+};
+
+i18n.use(initReactI18next).init({
+  resources,
+  lng: "en",
+  fallbackLng: "en",
+  interpolation: { escapeValue: false },
+});
+
+export default i18n;
