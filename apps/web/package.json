@@ -15,7 +15,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-switch": "^1.2.6",
-    "i18next": "^25.5.2",
+    "i18next": "^26.3.4",
     "lucide-react": "^0.541.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
